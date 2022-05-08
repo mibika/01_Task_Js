@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body bgcolor="#000000">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<header>
+  <h1 style="color:white">パダワン試験</h1>
+
+</header>
+
+
+<div class="question_Box">
+    <div class="answer_image"><img src="./img/obiwan.png">
+        <p class="name">
+        オビ＝ワン・ケノービ
+        </p>
+    </div>
+    <div class="arrow_answer">
+        お前がフォースに均衡をもたらすものか、見せてみろ
+    </div>
+</div>
+
+<div class="question_Box">
+    <div class="question_image"><img src="./img/babygrogu.png">
+        <p class="name">
+        グローグー
+        </p>
+    </div>
+    <div class="arrow_question">
+        ◎△＄♪×￥●＆％＃？！
+    </div>
+</div>
+
+<main>
+
+
+
+
+
+  <div style="color:white" class="quiz_area">
+    <div class="quiz_set">
+        第<span class="quiz_no">0</span>問
+        <div class="quiz_question"></div>
+        <div class="quiz_ans_area">
+            <ul></ul>
+        </div>
+        <div class="quiz_area_bg"></div>
+        <div class="quiz_area_icon"></div>
+    </div>
+    <div class="quiz_result"></div>
+</div>
+
+</section>  
+
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js?ver=1.12.4'></script>
+<script>
+$(function(){
+    var quizArea = $('.quiz_area'); 
+    var quiz_html = quizArea.html(); 
+    var quiz_cnt = 0; 
+    var quiz_fin_cnt = 5; 
+    var quiz_success_cnt = 0; 
+    
+    var aryQuiz = [];
+    aryQuiz.push(
+        {
+            question : 'ダース・ベイダーは、暗黒面に落ちてヘルメットをかぶる前は誰として知られていた?',
+            answer : ['アナキン・スカイウォーカー','ボバ・フェット', 'パルパティーン議長', 'ディン・ジャリン']
+        }
+        ,{
+            question : '「エピソード４／新たなる希望」の中で、ドロイドのＲ２―Ｄ２がメモリーの中に記録していた重要な秘密とは？',
+            answer : ['デス・スターの設計図','ジェダイのリスト', '反乱軍の居場所','実は中に人間が入っていた（ドロイドじゃなかった）']
+        }
+        ,{
+            question : 'おそろしい形相をしたジェダイの敵役といえば？',
+            answer : ['シス', 'ストームトルーパー', '反乱軍', 'ジャバザハット']
+        }
+        ,{
+            question : '「エピソード６／ジェダイの帰還」でルーク・スカイウォーカーが使用したライトセーバーの刃は何色？',
+            answer : ['緑', '青', '赤', '紫']
+        }
+        ,{
+            question : '「エピソード５／帝国の逆襲」で、ダース・ベイダーがルーク・スカイウォーカーとの戦いの後、ルークに言ったせりふは？',
+            answer : [ 'No, I am your father．','Luke, I am your father．', 'Because, I am your father．','I can be your father．']
+        }
+    );
+    
+    quizReset();
+
+    quizArea.on('click', '.quiz_ans_area ul li', function(){
+        quizArea.find('.quiz_area_bg').show();
+        $(this).addClass('selected');
+        if($(this).data('true')){
+            quizArea.find('.quiz_area_icon').addClass('true');
+            quiz_success_cnt++;
+        }else{
+            quizArea.find('.quiz_area_icon').addClass('false');
+        }
+        setTimeout(function(){
+            quizArea.find('.quiz_ans_area ul li').removeClass('selected');
+            quizArea.find('.quiz_area_icon').removeClass('true false');
+            quizArea.find('.quiz_area_bg').hide();
+            quiz_cnt++;
+            if(quiz_fin_cnt > quiz_cnt){
+                quizShow();
+            }else{
+quizResult();
+            }
+        }, 1500);
+    });
+    
+    quizArea.on('click', '.quiz_restart', function(){
+        quizReset();
+    });
+    
+    function quizReset(){
+        quizArea.html(quiz_html); 
+        quiz_cnt = 0;
+        quiz_success_cnt = 0;
+        quizShow();
+    }
+
+    function quizShow(){
+        quizArea.find('.quiz_no').text((quiz_cnt + 1));
+        //なんでquiz_cnt入れてる？
+        quizArea.find('.quiz_question').text(aryQuiz[quiz_cnt]['question']);
+      var success = aryQuiz[quiz_cnt]['answer'][0];
+        quizArea.find('.quiz_ans_area ul').empty();
+        var aryHoge = arrShuffle(aryQuiz[quiz_cnt]['answer'].concat());
+        $.each(aryHoge, function(key, value){
+            var fuga = '<li>' + value + '</li>';
+            //これどういうこと？
+            if(success === value){
+                fuga = '<li data-true="1">' + value + '</li>';
+            }
+            quizArea.find('.quiz_ans_area ul').append(fuga);
+        });
+    }
+    
+    function quizResult(){
+        quizArea.find('.quiz_set').hide();
+        var text = quiz_fin_cnt + '問中' + quiz_success_cnt + '問正解おめでとう。';
+        if(quiz_fin_cnt === quiz_success_cnt){
+            text += '<br>君は今日から私のパダワンだ！';
+        }
+        text += '<br><input type="button" value="もう一度修行する" class="quiz_restart p-10">';
+        quizArea.find('.quiz_result').html(text);
+        quizArea.find('.quiz_result').show();
+      }
+//これどういうこと？
+ function arrShuffle(arr){
+        for(i = arr.length - 1; i > 0; i--){
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = tmp;
+        }
+        return arr;
+    }
+});
+</script>
+
+</main>
+
+<footer></footer>
+
+</body>
+</html>
